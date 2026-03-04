@@ -1,0 +1,86 @@
+import bpy
+import math
+
+# ==============================
+# FUNCIÓN PARA CREAR MATERIAL
+# ==============================
+def crear_material(nombre, color_rgb):
+    mat = bpy.data.materials.new(name=nombre)
+    mat.diffuse_color = (*color_rgb, 1.0)  # RGBA
+    return mat
+
+
+# ==============================
+# FUNCIÓN PRINCIPAL
+# ==============================
+def generar_escenario():
+
+    # 1. LIMPIAR ESCENA
+    bpy.ops.object.select_all(action='SELECT')
+    bpy.ops.object.delete(use_global=False)
+
+    # 2. CREAR MATERIALES (RGB)
+    mat_pared_a = crear_material("ParedOscura", (0.1, 0.1, 0.1))
+    mat_pared_b = crear_material("ParedDetalle", (0.8, 0.2, 0.0))
+    mat_suelo   = crear_material("Suelo", (0.2, 0.2, 0.2))
+
+    # 3. PARÁMETROS
+    largo_pasillo = 20
+    ancho_pasillo = 4
+    intensidad_curva = 3   # Qué tan pronunciada es la curva
+
+    # 4. CREAR PAREDES EN CURVA
+    for i in range(largo_pasillo):
+
+        # Curvatura usando seno
+        curva = math.sin(i * 0.4) * intensidad_curva
+
+        # Pared izquierda
+        bpy.ops.mesh.primitive_cube_add(
+            size=2,
+            location=(-ancho_pasillo + curva, i * 2, 1)
+        )
+        pared_izq = bpy.context.active_object
+
+        if i % 2 == 0:
+            pared_izq.data.materials.append(mat_pared_a)
+        else:
+            pared_izq.data.materials.append(mat_pared_b)
+            pared_izq.scale.z = 1.5  # Escalamiento vertical
+
+        # Pared derecha
+        bpy.ops.mesh.primitive_cube_add(
+            size=2,
+            location=(ancho_pasillo + curva, i * 2, 1)
+        )
+        pared_der = bpy.context.active_object
+        pared_der.data.materials.append(mat_pared_a)
+
+    # 5. CREAR SUELO EN CURVA
+    bpy.ops.mesh.primitive_plane_add(
+        size=1,
+        location=(0, largo_pasillo - 1, 0)
+    )
+    suelo = bpy.context.active_object
+    suelo.scale.x = ancho_pasillo + intensidad_curva + 2
+    suelo.scale.y = largo_pasillo + 2
+    suelo.data.materials.append(mat_suelo)
+
+    # 6. ILUMINACIÓN
+    bpy.ops.object.light_add(type='POINT', location=(0, largo_pasillo, 8))
+    luz = bpy.context.active_object
+    luz.data.energy = 1200
+
+    # 7. CÁMARA
+    bpy.ops.object.camera_add(location=(0, -10, 8))
+    cam = bpy.context.active_object
+    cam.rotation_euler = (1.1, 0, 0)
+    bpy.context.scene.camera = cam
+
+    print("Escenario curvo generado correctamente 🎮")
+
+
+# ==============================
+# EJECUTAR
+# ==============================
+generar_escenario()
