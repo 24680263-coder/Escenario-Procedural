@@ -1,0 +1,289 @@
+Introducción
+
+El proyecto fue desarrollado en Blender utilizando la API oficial bpy, la cual permite automatizar la creación, manipulación y animación de objetos dentro del entorno 3D mediante programación en Python.
+
+
+El objetivo del script es generar múltiples objetos de forma automática, aplicarles transformaciones, crear una curva como trayectoria y animar los objetos para que sigan dicho recorrido.
+
+Importación de la Librería
+   
+El código inicia importando la librería principal de Blender:
+
+import bpy
+
+La librería bpy proporciona acceso a:
+
+Creación de objetos (Mesh, Curve, Light, etc.)
+Manipulación de propiedades (posición, escala, rotación)
+Configuración de animaciones
+Aplicación de materiales
+Gestión de la escena
+
+Generación Automática de Objetos
+
+Se utiliza una estructura repetitiva (for) para crear múltiples cubos de manera automatizada:
+
+for i in range(n):
+bpy.ops.mesh.primitive_cube_add(location=(i * d, 0, 0))
+    
+Función del ciclo:
+
+range(n) define la cantidad de objetos.
+
+La variable i controla la posición en el eje X.
+Se evita la creación manual, optimizando el proceso.
+
+Posteriormente, cada objeto es escalado:
+
+obj.scale = (sx, sy, sz)
+Esto permite modificar sus dimensiones en los ejes X, Y y Z.
+
+Creación de la Curva como Trayectoria
+
+Se añade una curva tipo Bézier:
+
+bpy.ops.curve.primitive_bezier_curve_add()
+curve = bpy.context.object
+
+La curva funciona como camino o trayectoria para la animación.
+
+Aplicación de Restricción (Constraint)
+
+Para que los objetos sigan la curva, se agrega una restricción del tipo FOLLOW_PATH:
+
+constraint = obj.constraints.new(type='FOLLOW_PATH')
+constraint.target = curve
+Esta restricción vincula el objeto con la curva, permitiendo que su movimiento esté controlado por la trayectoria definida.
+
+
+Configuración de la Animación
+
+Se establece el rango de fotogramas de la escena:
+bpy.context.scene.frame_start = 1
+bpy.context.scene.frame_end = 175
+
+La duración del recorrido puede configurarse mediante:
+
+curve.data.path_duration = 175
+
+O insertando keyframes manualmente:
+
+obj.keyframe_insert(data_path="location", frame=1)
+obj.keyframe_insert(data_path="location", frame=175)
+Esto define el inicio y fin del movimiento dentro de la línea de tiempo.
+12. Aplicación de Materiales
+
+Se crea y asigna un material:
+
+mat = bpy.data.materials.new(name="Material")
+mat.diffuse_color = (r, g, b, 1)
+obj.data.materials.append(mat)
+Esto permite modificar la apariencia visual del objeto dentro del motor de render (Eevee o Cycles).
+
+Análisis Técnico
+
+
+El script demuestra:
+
+Automatización de procesos en entornos 3D.
+
+Uso de estructuras de control (ciclos).
+
+Manipulación de transformaciones espaciales.
+
+Implementación de animación procedural.
+
+Aplicación de restricciones dinámicas.
+
+Integración entre programación y gráficos computacionales.
+
+
+Desde una perspectiva técnica, el proyecto combina conceptos de:
+
+Programación estructurada Modelado tridimensional
+
+Cinemática básica
+
+Simulación de trayectorias
+
+Automatización de escenas 3D
+
+<img width="563" height="713" alt="image" src="https://github.com/user-attachments/assets/ad00cd64-b1aa-4290-93ed-5eb2cd2609b1" />
+<img width="563" height="833" alt="image" src="https://github.com/user-attachments/assets/09e40e03-b2ca-45ea-a25d-c86b66f39a35" />
+
+
+1-¿Qué es este proyecto? 
+
+Este proyecto consiste en: 
+
+•	Crear un escenario automáticamente con Python. 
+•	Generar un camino usando una curva. 
+•	Hacer que la cámara recorra ese camino. 
+•	Renderizar la animación. 
+
+Se trabaja dentro de Blender usando su editor de Scripting. 
+
+2-Explicación del Escenario Procedural 
+
+Un escenario procedural significa que: 
+
+Los objetos se crean automáticamente mediante código y no manualmente. 
+
+En este caso el código: 
+
+•	Crea un terreno 
+•	Genera una curva (camino) 
+•	Coloca objetos decorativos aleatorios 
+•	Agrega una cámara 
+•	Hace que la cámara siga el camino 
+
+3- Cómo Hacer la Curva (Explicación CLARA para Exponer) 
+
+La curva es lo más importante porque será el recorrido de la cámara. 
+
+PASO A PASO EN BLENDER (MANUAL) 
+
+•	Ir a Shift + A 
+•	Seleccionar: 
+•	Curve: Bezier 
+•	Se crea una línea curva. 
+
+Editar la curva 
+
+•	Selecciona la curva. 
+•	Presiona Tab (Modo Edición). 
+•	Verás puntos con manejadores. 
+•	Puedes mover los puntos con G. 
+•	Para agregar más puntos: 
+o	Selecciona un punto 
+o	Click derecho y Subdivide 
+
+Esto permite hacer curvas suaves. 
+
+¿Por qué usamos curva Bezier? 
+
+Porque: 
+
+•	Permite trayectorias suaves. 
+•	Tiene manejadores que controlan la dirección. 
+•	Es ideal para animaciones de cámara. 
+4-Cómo Hacer que la Cámara Siga la Curva 
+
+Una vez creada la curva: 
+
+•	Agregamos una cámara. 
+•	Seleccionamos la cámara. 
+•	Vamos a: 
+•	Constraints : Add Constraint de Follow Path 
+•	En Target elegimos la curva. 
+•	Activamos "Follow Curve" 
+•	Ajustamos el tiempo de animación. 
+
+5-Cómo Funciona la Animación 
+
+Blender mueve la cámara automáticamente desde el: 
+
+•	Frame 1: Inicio del camino 
+•	Frame 250: Final del camino 
+
+Eso se controla con: 
+
+camino.data.path_duration = 250 
+ 
+6- ¿En qué consiste el proyecto?
+
+El proyecto integrador consiste en la creación de un escenario procedural en Blender utilizando programación en Python (API bpy), incorporando una animación automatizada de cámara que recorre un camino definido mediante una curva Bézier.
+
+
+El propósito principal es demostrar cómo la programación puede utilizarse para: 
+
+
+•	Automatizar la creación de objetos. 
+•	Generar geometría de forma procedural. 
+•	Controlar animaciones mediante código. 
+•	Integrar modelado 3D con lógica computacional. 
+
+7- ¿Qué significa “Escenario Procedural”? 
+ 
+Un escenario procedural es aquel que se genera mediante código en lugar de modelarse manualmente. 
+En este proyecto: 
+
+•	Se limpia la escena automáticamente. 
+•	Se crea un plano que funciona como terreno. 
+•	Se generan elementos del entorno mediante instrucciones programadas. 
+•	Se define un camino utilizando una curva 3D. 
+
+Todo esto se realiza usando la API bpy de Blender. 
+
+8- Creación del Camino 
+
+El camino se construye utilizando una curva Bézier en 3D, la cual contiene puntos de control que determinan su forma. 
+Esta curva cumple dos funciones: 
+
+1.	Representar el recorrido dentro del escenario. 
+2.	Servir como trayectoria para la animación de la cámara.
+   
+9- Animación de la Cámara
+  	
+La parte más importante del proyecto es la animación. 
+
+Para lograr que la cámara se mueva automáticamente: 
+
+•	Se crea una cámara por código. 
+•	Se le aplica la restricción Follow Path. 
+•	Se vincula esa restricción a la curva creada. 
+•	Se configura la duración del recorrido (por ejemplo, 250 frames). 
+
+De esta manera, la cámara sigue el camino de forma suave y continua durante la animación. 
+
+10- Funcionamiento Técnico General 
+
+El proceso completo ocurre en este orden: 
+
+Inicialización y limpieza de escena. 
+Creación del terreno. 
+Generación de la curva (camino). 
+Creación y posicionamiento de la cámara. 
+Aplicación de restricción Follow Path. 
+Configuración de la línea de tiempo. 
+Reproducción de la animación. 
+Objetivo Académico
+  	
+11-El proyecto demuestra que el estudiante puede: 
+
+•	Utilizar programación dentro de Blender. 
+•	Manipular objetos mediante código. 
+•	Aplicar conceptos de animación. 
+•	Integrar estructuras de control en un entorno 3D. 
+•	Automatizar procesos gráficos. 
+
+Resultados 
+
+12- El resultado final es una animación donde: 
+
+•	La cámara recorre el escenario. 
+•	El movimiento es continuo y controlado. 
+•	Todo el proceso fue generado mediante scripting. 
+
+Esto evidencia la correcta integración entre: 
+
+•	Programación 
+•	Modelado 3D 
+•	Animación 
+•	Automatización 
+
+Conclusión 
+El proyecto integrador consolida los conocimientos de la unidad al combinar lógica de programación con herramientas de modelado 3D. 
+
+Se demuestra que Blender no solo es una herramienta de diseño, sino también un entorno programable capaz de generar escenas y animaciones de manera automatizada. 
+
+<img width="941" height="529" alt="image" src="https://github.com/user-attachments/assets/275df106-b38a-417d-b8b7-f9c1f94d9187" />
+<img width="941" height="528" alt="image" src="https://github.com/user-attachments/assets/721f3b07-7234-4da5-ab03-fba0bff305d4" />
+<img width="941" height="529" alt="image" src="https://github.com/user-attachments/assets/43ad1d8f-a3ce-48a0-a253-f00e3f4833dc" />
+<img width="941" height="527" alt="image" src="https://github.com/user-attachments/assets/d11f364e-a828-4aae-94f7-2cccacc2bee4" />
+
+
+
+
+
+
